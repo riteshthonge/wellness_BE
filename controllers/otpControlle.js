@@ -1,5 +1,5 @@
 import { otpModel, userModel } from "../models/userModels.js";
-import transporter from "../Config/nodeMailer.js";
+import transporter from "../config/nodeMailer.js";
 import {
     EMAIL_VERIFY_TEMPLATE,
     PASSWORD_RESET_TEMPLATE,
