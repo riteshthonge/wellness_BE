@@ -20,11 +20,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const allowedApi=['http://localhost:3000']
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://wellness-fe.vercel.app'
+];
+
 const port =process.env.PORT ||4000;
 connectDB();
 
 app.use(express.json());
-app.use(cors({origin:allowedApi, credentials:true}))
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
 app.use(cookieParser())
 
 app.get('/',(req,res)=>
