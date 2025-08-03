@@ -3,17 +3,21 @@ import { userModel } from "../models/userModels.js";
 
 const apiUserAuth = async (req, res, next) => {
   try {
-    console.log("ritesh thonge")
-    const { token } = req.cookies;
-    console.log(token+"Hi");
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
+    // Check if Authorization header is present and well-formed
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Not authorized. Please login again.",
+        message: "Not authorized. No token provided.",
       });
     }
 
+    // ✅ Extract token from header
+    const token = authHeader.split(" ")[1];
+    console.log("Token received:", token);
+
+    // ✅ Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
@@ -24,6 +28,7 @@ const apiUserAuth = async (req, res, next) => {
       });
     }
 
+    // ✅ Optional: Check if user exists
     const user = await userModel.findById(userId);
     if (!user) {
       return res.status(401).json({
@@ -32,7 +37,10 @@ const apiUserAuth = async (req, res, next) => {
       });
     }
 
-   next();
+    // ✅ Attach user ID to request for further use
+    req.body.userId = userId;
+
+    next();
   } catch (error) {
     return res.status(401).json({
       success: false,
